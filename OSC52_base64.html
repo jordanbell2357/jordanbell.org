@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en-US">
+
+<head>
+  <meta charset="utf-8" />
+  <title>OSC52, clipboard, and base64</title>
+</head>
+
+<body>
+<section>
+
+<div>
+<p>
+Windows PowerShell clip.exe
+
+<a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/clip">clip</a>
+</p>
+
+<blockquote>
+Redirects the command output from the command line to the Windows clipboard.
+You can use this command to copy data directly into any application that can receive text from the Clipboard.
+You can also paste this text output into other programs.
+</blockquote>
+
+<pre>
+echo "Hello Windows" | clip.exe
+</pre>
+</div>
+
+
+<div>
+<p>
+Start with <a href="https://jvns.ca/til/vim-osc52/">Copying to your clipboard over SSH in vim with OSC52</a>.
+</p>
+
+<pre>
+pipe to printf "\033]52;c;%s\007" "$(base64 | tr -d '\n')"
+
+echo "Hello, World!" | printf "\033]52;c;%s\007" "$(base64 | tr -d '\n')"
+
+echo "Hello, World!" | printf "\e]52;c;%s\a" "$(base64 | tr -d '\n')"
+</pre>
+</div>
+
+
+
+<div>
+We can also terminate escape sequence with ESC \ rather than BEL.
+
+<a href="https://invisible-island.net/xterm/ctlseqs/ctlseqs.html">XTerm Control Sequences</a>
+
+<blockquote>
+XTerm accepts either BEL  or ST  for terminating OSC
+sequences, and when returning information, uses the same
+terminator used in a query.  While the latter is preferred,
+the former is supported for legacy applications:
+o   Although documented in the changes for X.V10R4 (December
+    1986), BEL  as a string terminator dates from X11R4
+    (December 1989).
+o   Since XFree86-3.1.2Ee (August 1996), xterm has accepted ST
+    (the documented string terminator in ECMA-48).
+</blockquote>
+
+<pre>
+echo "Hello, World!" | printf "\e]52;c;%s\e\x5c" "$(base64 | tr -d '\n')"
+</pre>
+</div>
+
+
+
+<div>
+<p>
+Starting form <a href="https://nieko.net/blog/osc-52-and-nested-gnu-screen">Blog - OSC 52 and (nested) GNU Screen</a>.
+</p>
+
+<p>
+<a href="https://ss64.com/bash/base64.html">base64 Man Page</a>.
+</p>
+
+<pre>
+printf "\033]52;c;$(printf "%s" "test" | base64)\a"
+
+printf "test" | printf "\033]52;c;$(base64)\a"
+
+printf "test" | printf "\e]52;c;$(base64)\a"
+
+printf "test\ntest" | printf "\e]52;c;$(base64)\a"
+
+printf "test\ntest" | printf "\e]52;c;$(base64 -w0)\a"
+
+printf "test\ntest" | printf "\e]52;c;$(base64 -w0)\a"
+</pre>
+</div>
+
+
+<div>
+<p>
+<a href="https://invisible-island.net/xterm/ctlseqs/ctlseqs.html#h3-Operating-System-Commands">xterm ctlseqs</a>
+</p>
+
+<pre>
+    <em>Ps</em> = 5 2  ⇒  Manipulate Selection Data.  These controls may
+    be disabled using the allowWindowOps resource.  The parameter
+    <em>Pt</em> is parsed as
+        <em>Pc</em> ; <em>Pd</em>
+
+    The first, <em>Pc</em>, may contain zero or more characters from the
+    set c , p , q , s , 0 , 1 , 2 , 3 , 4 , 5 , 6 , and 7 .  It is
+    used to construct a list of selection parameters for
+    clipboard, primary, secondary, select, or cut-buffers 0
+    through 7 respectively, in the order given.  If the parameter
+    is empty, <em>xterm</em> uses s 0 , to specify the configurable
+    primary/clipboard selection and cut-buffer 0.
+
+    The second parameter, <em>Pd</em>, gives the selection data.  Normally
+    this is a string encoded in base64 (RFC-4648).  The data
+    becomes the new selection, which is then available for pasting
+    by other applications.
+
+    If the second parameter is a ? , <em>xterm</em> replies to the host
+    with the selection data encoded using the same protocol.  It
+    uses the first selection found by asking successively for each
+    item from the list of selection parameters.
+
+    If the second parameter is neither a base64 string nor ? ,
+    then the selection is cleared.
+</pre>
+</div>
+
+
+<div>
+<p>
+For GNU Screen, and indeed for xterm itself.
+</p>
+
+<pre>
+printf "\033P\033]52;c;$(printf "%s" "test" | base64)\a\033\\\\"
+
+printf "\eP\e]52;c;$(printf "%s" "test" | base64)\a\e\x5c"
+
+printf "test" | printf "\eP\e]52;c;$(base64)\a\e\x5c"
+</pre>
+</div>
+
+
+
+<div>
+<p>
+<a href="https://marceloborges.dev/posts/3/">Supercharging My Clipboard with OSC52 Escape Sequence</a>
+</p>
+
+<pre>
+echo "Hello World!" | printf '\033]52;c;%s\a' "$(cat | base64 | tr -d '\n')
+
+echo "Hello World!" | printf '\033]52;c;%s\a' "$(base64 | tr -d '\n')"
+
+echo "Hello World!" | printf '\033]52;c;%s\a' "$(base64 -w0)"
+
+echo "Hello World!" | printf '\e]52;c;%s\a' "$(base64 -w0)"
+</pre>
+</div>
+
+
+<div>
+<p>
+<a href="https://opensource.com/article/19/7/xclip">Copy and paste at the Linux command line with xclip</a>
+</p>
+
+<pre>
+-sel = -selection
+-clip = -clipboard
+    
+xclip -sel clip file_name
+
+printf "Line 1\nLine 2" | xclip -sel clip
+
+man xclip > xclip.man
+
+xclip -sel clip -o xclip.man.copy
+
+diff xclip.man xclip.man.copy
+
+or
+
+rm xclip.man.copy
+
+vim xclip.man.copy, and paste in insert mode
+
+diff xclip.man xclip.man.copy
+</pre>
+</div>
+
+</section>
+</body>
+</html>
