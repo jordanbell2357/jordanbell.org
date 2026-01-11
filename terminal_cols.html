@@ -8,24 +8,11 @@
 
 <body>
 <section>
+<h1>Linux terminal columns</h1>
+
 
 <div>
-Length of Bash prompt PS1
-<pre>
-sudo apt install ansi2txt
-printf "${PS1@P}" | ansi2txt | col | wc -m
-</pre>
-</div>
-
-<div>
-<p>Print a line of A's and 🐧's</p>
-<pre>
-
-</pre>
-</div>
-
-<div>
-Number of terminal cols
+<p>Number of terminal columns.</p>
 <pre>
 tput cols
 </pre>
@@ -33,7 +20,7 @@ tput cols
 
 
 <div>
-Fill terminal line with A.
+<p>Fill terminal line with A.</p>
 <pre>
 printf "\x41" | xargs yes 2>/dev/null | head -n $(tput cols) | tr -d "\n" | xargs printf "%s\n"
 </pre>
@@ -42,7 +29,7 @@ printf "\x41" | xargs yes 2>/dev/null | head -n $(tput cols) | tr -d "\n" | xarg
 
 
 <div>
-Fill terminal line with penguin.
+<p>Fill terminal line with penguin. (Double the width of A.)</p>
 <pre>
 printf "\U1F427" | xargs yes 2>/dev/null | head -n $(($(tput cols)/2)) | tr -d "\n" | xargs printf "%s\n"
 </pre>
@@ -50,6 +37,7 @@ printf "\U1F427" | xargs yes 2>/dev/null | head -n $(($(tput cols)/2)) | tr -d "
 
 
 <div>
+<p>Fill line with penguin then next line with A.</p>
 <pre>
 printf "\x41" | xargs yes 2>/dev/null | head -n $(tput cols) | tr -d "\n" &&
 printf "\U1F427" | xargs yes 2>/dev/null | head -n $(($(tput cols)/2)) | tr -d "\n" | xargs printf "%s\n"
