@@ -14,13 +14,24 @@
 DECAWM 
 </h1>
 
+
+<div>
+<p>Inspect line of console_codes man page containing "DECAWM", with two lines of trailing context (<tt>-A2</tt>) and one line of
+  leading context (<tt>-B1</tt>).
+</p>
 <pre>
-$ man console_codes | grep -A 2 -B 1 DECAWM
+$ man console_codes | grep -A2 -B1 DECAWM
        ESC [ ? 7 h
               DECAWM (default on): Set autowrap on.  In this mode, a graphic character emitted after column
               80  (or  column  132  of  DECCOLM is on) forces a wrap to the beginning of the following line
               first.
 </pre>
+</div>
+
+
+<div>
+
+</div>
 
 </section>
 </body>
