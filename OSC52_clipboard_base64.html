@@ -58,12 +58,13 @@ Start with <a href="https://jvns.ca/til/vim-osc52/">Copying to your clipboard ov
 <pre>
 pipe to printf "\033]52;c;%s\007" "$(base64 | tr -d '\n')"
 
-echo "Hello, World!" | printf "\033]52;c;%s\007" "$(base64 | tr -d '\n')"
+printf 'Hello, World!\n' | printf "\033]52;c;%s\007" "$(base64 | tr -d '\n')"
 
-echo "Hello, World!" | printf "\e]52;c;%s\a" "$(base64 | tr -d '\n')"
+printf 'Hello, World!\n' | printf "\e]52;c;%s\a" "$(base64 | tr -d '\n')"
+
+printf 'Hello, World!\n' | printf "\e]52;c;%s\a" "$(base64 -w0)"
 </pre>
 </div>
-
 
 
 <div>
@@ -84,7 +85,9 @@ o   Since XFree86-3.1.2Ee (August 1996), xterm has accepted ST
 </blockquote>
 
 <pre>
-echo "Hello, World!" | printf "\e]52;c;%s\e\x5c" "$(base64 | tr -d '\n')"
+printf 'Hello, World!\n' | printf "\e]52;c;%s\a" "$(base64 -w0)"
+
+printf "Hello, World!\n" | printf "\e]52;c;%s\e\x5c" "$(base64 -w0)"
 </pre>
 </div>
 
@@ -160,7 +163,7 @@ printf "\033P\033]52;c;$(printf "%s" "test" | base64)\a\033\\\\"
 
 printf "\eP\e]52;c;$(printf "%s" "test" | base64)\a\e\x5c"
 
-printf "test" | printf "\eP\e]52;c;$(base64)\a\e\x5c"
+printf "line one\nline two" | printf "\eP\e]52;c;$(base64)\a\e\x5c"
 </pre>
 </div>
 
